@@ -241,7 +241,7 @@ void network::transfer_msg()
 			while (crawler->get_next() != NULL)	//while it is not the last one
 			{
 				crawler->set_message(buffer);	//commit word
-				cout << crawler->get_key() << " recieved " << crawler->get_message();	//print condition
+				cout << crawler->get_key() << " recieved " << crawler->get_message() << endl ;	//print condition
 				crawler = crawler->get_next();	//update condition
 			}
 		}
