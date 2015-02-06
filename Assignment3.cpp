@@ -8,49 +8,52 @@
 */
 #include<iostream>
 #include<string>
+#include<fstream>
 
 using std::cout;
 using std::cin;
 using std::endl;
 using std::string;
-
-/*
- * Still needs to set names. Hardcoding is probably simplest and fastest. ugly though.
- * 
-*/
+using std::getline;
 
 class beacon
 {
 public:
 	beacon();						//initial build
-	beacon(string &k);				//builds with key
+	template<typename T>
+	beacon(T k);					//builds with key
 
 	string get_key();				//returns key (aka name here)
 	string get_message();			//return value
 	beacon* get_next();				//return next node
-	void set_message(string &arg);	//commits values
-	void set_key(string &arg);		//commits key/name
+	void set_message(string arg);	//commits values
+	void set_key(string arg);		//commits key/name
 	void set_next(beacon *nxt);		//commits next in chain
+
 private:
 	string key;		//name, really.
 	string message;	//value(s)
 	beacon* next;	//next in the chain
 };
 
-class network /*: beacon*/
+class network /*: public beacon*/
 {
+public:
+	network();					//standard start
+	~network();					//destructor
+	template<typename T>
+	beacon* find_city(T name);	//returns city location by name
+	void build_net();			//builds the network. hardcoded initial names
+	void print_path();			//prints whole chain with names
+	template<typename T>
+	T find_key(T k);			//finds a city by name
+	void transfer_msg();		//pushes a message through the nodes.
+	void add_city();			//inserts city
+	void delete_city();			//calls the delete query
+
 private:
 	beacon* head;
 	beacon* crawler;
-public:
-	network();
-	template<typename T>
-	network(T length);			//builds the network without being asked.
-	template<typename T>
-	void build_net(T length);
-	template<typename T>
-	T find_message(T msg);		//iterates through and returns the match
-	void transfer_msg();		//pushes a message through the nodes.
 };
 
 //MAIN
@@ -60,27 +63,42 @@ int main()
 
 	unsigned int select = 0;
 	//cout list of options.
-	while(select != 5)
+	cout << "======Main Menu======" << endl
+		<< "1. Build Network" << endl
+		<< "2. Print Network Path" << endl
+		<< "3. Transmit Message Coast-To-Coast" << endl
+		<< "4. Add City" << endl
+		<< "5. Delete City" << endl
+		<< "6. Clear Network" << endl
+		<< "7. Quit" << endl;
+
+	while(select != 7)
 	{
 	//switch
-		cout << "\n <#>:";	//for testing purposes. Make print list of options.
 		cin >> select;
 		switch (select)
 		{
-		case 1:
-
+		case 1:	//build net
+			net->build_net();
 			break;
-		case 2:
-
+		case 2:	//print path
+			net->print_path();
 			break;
-		case 3:
-
+		case 3:	//transmit a message
+			net->transfer_msg();
 			break;
-		case 4:
-
+		case 4:	//add city
+			net->add_city();
 			break;
-
-		default:
+		case 5:	//delete city
+			net->delete_city();
+			break;
+		case 6:	//clear net
+			delete net;
+			break;
+		case 7: //quit
+			break;
+		default:	//no match
 			cout << "\n That was not an option.";
 		}
 	}
@@ -90,48 +108,19 @@ int main()
 	return 0;
 }
 
-
-//NETWORK BLOCK
-network::network()
-{
-	crawler = NULL;
-	head = NULL;
-}
-
-template<typename T>
-network::network(T length)
-{
-	crawler = NULL;
-	head = NULL;
-	build_net(length);
-}
-
-template<typename T>
-void network::build_net(T length)
-{
-	unsigned int i = 0;
-	crawler = new beacon;	//creates head
-	head = crawler;			//assigns head to top.
-
-	while(i < length)		//creates chain to specified length
-	{
-		beacon n = new beacon();
-		crawler.set_next(n);
-		crawler = n;
-		i++;
-	}
-}
-template<typename T>
-T find_message(T msg)
-{
-	//do shit
-}
-//END NETWORK
-
-//BEACON BLOCK
+//**************
+//=BEACON BLOCK=
+//**************
 beacon::beacon()
 {
-	next = NULL;	 
+	next = NULL;
+}
+
+template<typename T>
+beacon::beacon(T k)
+{
+	next = NULL;
+	key = k;
 }
 
 string beacon::get_key()
@@ -149,12 +138,12 @@ beacon* beacon::get_next()
 	return next;
 }
 
-void beacon::set_message(string &arg)
+void beacon::set_message(string arg)
 {
 	message = arg;
 }
 
-void beacon::set_key(string &arg)
+void beacon::set_key(string arg)
 {
 	key = arg;
 }
@@ -163,5 +152,144 @@ void beacon::set_next(beacon *nxt)
 {
 	next = nxt;
 }
-//END BEACON
+//***************
+//=END BEACON=
+//***************
 
+//***************
+//=NETWORK BLOCK=
+//***************
+network::network()
+{
+	crawler = NULL;
+	head = NULL;
+}
+network::~network()
+{
+	crawler = head;
+	beacon* hitman;
+	while (crawler != NULL)
+	{
+		hitman = crawler;
+		crawler = crawler->get_next();
+		delete hitman;
+	}
+}
+
+void network::build_net()
+{
+	crawler = new beacon;
+	head = crawler;
+	crawler->set_key("Los Angeles");
+
+	//repeat this forever, pretty much. Hard-coding initial build.
+	beacon* n = new beacon("Phoenix");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("Denver");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("Dallas");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("St. Louis");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("Chicago");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("Atlanta");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("Washington, D.C.");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("New York");
+	crawler->set_next(n);
+	crawler = n;
+	n = new beacon("Boston");
+	crawler->set_next(n);
+	crawler = n;
+
+	print_path();
+}
+
+void network::print_path()
+{
+		crawler = head;						//take it from the top
+		cout << "===CURRENT PATH===" << endl;
+		cout << crawler->get_key();			//just to keep the arrows out of the end of the print
+		crawler = crawler->get_next();		//
+		while (crawler->get_next() != NULL)	//while it isnt the end of the list
+		{
+			cout << " -> " << crawler->get_key();
+			crawler = crawler->get_next();
+		}
+		cout << endl << "==================" << endl;;
+}
+
+void network::transfer_msg()
+{
+	std::ifstream infile;			//set up infile
+	infile.open("messageIn.txt");	//open infile
+	if (infile.is_open())			//if it is open, proceed. Could use error handling if it doesn't open, but this is hard coded, so it is an environment issue if that is the case
+	{
+		string buffer;
+		while (getline(infile, buffer, ' '))	//while there are still words to grab (delim by spaces)
+		{
+			crawler = head;						//set to top of the chain
+			while (crawler->get_next() != NULL)	//while it is not the last one
+			{
+				crawler->set_message(buffer);	//commit word
+				cout << crawler->get_key() << " recieved " << crawler->get_message();	//print condition
+				crawler = crawler->get_next();	//update condition
+			}
+		}
+	}
+}
+
+template<typename T>
+beacon* network::find_city(T name)
+{
+	crawler = head;	//start at head
+	while (crawler->get_next() != NULL)	//while it is not the end of the chain
+	{
+		if (crawler->get_key() == name)	//if it finds a match, return chain
+			return crawler;
+		crawler = crawler->get_next();	//else move on to the next city
+	}
+	return NULL;	//same as returning the last crawler iteration, really.
+}
+
+void network::add_city()
+{
+	string ncity, pcity;				//control strings
+	cout << "Enter a city name:" << endl;
+	cin.ignore(1000, '\n');
+	getline(cin, ncity);				//get new city
+	cout << endl << "Enter a previous city name:" << endl;
+	getline(cin, pcity);				//get previous city
+
+	crawler = find_city(pcity);			//sets crawler to previous
+	beacon* temp = new beacon(ncity);	//creates new node with specified name
+	temp->set_next(crawler->get_next());//sets it's link to the original next
+	crawler->set_next(temp);			//sets the previous node to the new one in the chain
+}
+
+void network::delete_city()
+{
+	cout << "Name of the city:" << endl;
+	string dcity;							//to store city name
+	cin.ignore(1000, '\n');
+	getline(cin, dcity);					//grab name
+	beacon* temp;
+	temp = find_city(dcity);				//make a temporary that points to the deleted-to-be
+	crawler = head;
+	while (crawler->get_next() != temp)		//find node right before delete
+		crawler = crawler->get_next();		//^^
+	crawler->set_next(temp->get_next());	//set the node prior to temp (the to-be-deleted) to point to the node after the one to be deleted
+	delete temp;							//delete node
+}
+//*************
+//=END NETWORK=
+//*************
