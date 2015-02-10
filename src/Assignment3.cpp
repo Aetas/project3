@@ -62,18 +62,19 @@ int main()
 	network* net = new network;
 
 	unsigned int select = 0;
-	//cout list of options.
-	cout << "======Main Menu======" << endl
-		<< "1. Build Network" << endl
-		<< "2. Print Network Path" << endl
-		<< "3. Transmit Message Coast-To-Coast" << endl
-		<< "4. Add City" << endl
-		<< "5. Delete City" << endl
-		<< "6. Clear Network" << endl
-		<< "7. Quit" << endl;
 
 	while(select != 7)
 	{
+		//cout list of options.
+		cout << "======Main Menu=====" << endl
+			<< "1. Build Network" << endl
+			<< "2. Print Network Path" << endl
+			<< "3. Transmit Message Coast-To-Coast" << endl
+			<< "4. Add City" << endl
+			<< "5. Delete City" << endl
+			<< "6. Clear Network" << endl
+			<< "7. Quit" << endl;
+
 	//switch
 		cin >> select;
 		switch (select)
@@ -95,8 +96,10 @@ int main()
 			break;
 		case 6:	//clear net
 			delete net;
+			cout << "Deleted network" << endl;
 			break;
 		case 7: //quit
+			cout << "Goodbye!" << endl;
 			break;
 		default:	//no match
 			cout << "\n That was not an option.";
@@ -218,14 +221,13 @@ void network::print_path()
 {
 		crawler = head;						//take it from the top
 		cout << "===CURRENT PATH===" << endl;
-		cout << crawler->get_key();			//just to keep the arrows out of the end of the print
-		crawler = crawler->get_next();		//
-		while (crawler->get_next() != NULL)	//while it isnt the end of the list
+		while (crawler/*->get_next()*/ != NULL)	//while it isnt the end of the list
 		{
-			cout << " -> " << crawler->get_key();
+			cout << crawler->get_key() << " -> " ;
 			crawler = crawler->get_next();
 		}
-		cout << endl << "==================" << endl;;
+		cout << " NULL";
+		cout << endl << "=================" << endl;;
 }
 
 void network::transfer_msg()
@@ -264,10 +266,10 @@ beacon* network::find_city(T name)
 void network::add_city()
 {
 	string ncity, pcity;				//control strings
-	cout << "Enter a city name:" << endl;
+	cout << "Enter a city name: " << endl;
 	cin.ignore(1000, '\n');
 	getline(cin, ncity);				//get new city
-	cout << endl << "Enter a previous city name:" << endl;
+	cout << endl << "Enter a previous city name: " << endl;
 	getline(cin, pcity);				//get previous city
 
 	crawler = find_city(pcity);			//sets crawler to previous
