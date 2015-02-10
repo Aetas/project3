@@ -3,6 +3,110 @@
 #include<string>
 #include<fstream>
 
+<<<<<<< HEAD:src/Network.cpp
+=======
+using std::cout;
+using std::cin;
+using std::endl;
+using std::string;
+using std::getline;
+
+class beacon
+{
+public:
+	beacon();						//initial build
+	template<typename T>
+	beacon(T k);					//builds with key
+
+	string get_key();				//returns key (aka name here)
+	string get_message();			//return value
+	beacon* get_next();				//return next node
+	void set_message(string arg);	//commits values
+	void set_key(string arg);		//commits key/name
+	void set_next(beacon *nxt);		//commits next in chain
+
+private:
+	string key;		//name, really.
+	string message;	//value(s)
+	beacon* next;	//next in the chain
+};
+
+class network /*: public beacon*/
+{
+public:
+	network();					//standard start
+	~network();					//destructor
+	template<typename T>
+	beacon* find_city(T name);	//returns city location by name
+	void build_net();			//builds the network. hardcoded initial names
+	void print_path();			//prints whole chain with names
+	template<typename T>
+	T find_key(T k);			//finds a city by name
+	void transfer_msg();		//pushes a message through the nodes.
+	void add_city();			//inserts city
+	void delete_city();			//calls the delete query
+
+private:
+	beacon* head;
+	beacon* crawler;
+};
+
+//MAIN
+int main()
+{
+	network* net = new network;
+
+	unsigned int select = 0;
+
+	while(select != 7)
+	{
+		//cout list of options.
+		cout << "======Main Menu=====" << endl
+			<< "1. Build Network" << endl
+			<< "2. Print Network Path" << endl
+			<< "3. Transmit Message Coast-To-Coast" << endl
+			<< "4. Add City" << endl
+			<< "5. Delete City" << endl
+			<< "6. Clear Network" << endl
+			<< "7. Quit" << endl;
+
+	//switch
+		cin >> select;
+		switch (select)
+		{
+		case 1:	//build net
+			net->build_net();
+			break;
+		case 2:	//print path
+			net->print_path();
+			break;
+		case 3:	//transmit a message
+			net->transfer_msg();
+			break;
+		case 4:	//add city
+			net->add_city();
+			break;
+		case 5:	//delete city
+			net->delete_city();
+			break;
+		case 6:	//clear net
+			delete net;
+			cout << "Deleted network" << endl;
+			break;
+		case 7: //quit
+			cout << "Goodbye!" << endl;
+			break;
+		default:	//no match
+			cout << "\n That was not an option.";
+		}
+	}
+
+	cout << endl
+		<< endl;
+	return 0;
+}
+
+>>>>>>> InDefenseOfTheAncients:src/Assignment3.cpp
 //**************
 //=BEACON BLOCK=
 //**************
@@ -111,6 +215,7 @@ void network::build_net()
 
 void network::print_path()
 {
+<<<<<<< HEAD:src/Network.cpp
 	crawler = head;						//take it from the top
 	std::cout << "===CURRENT PATH===" << std::endl;
 	std::cout << crawler->get_key();			//just to keep the arrows out of the end of the print
@@ -121,6 +226,17 @@ void network::print_path()
 		crawler = crawler->get_next();
 	}
 	std::cout << std::endl << "==================" << std::endl;
+=======
+		crawler = head;						//take it from the top
+		cout << "===CURRENT PATH===" << endl;
+		while (crawler/*->get_next()*/ != NULL)	//while it isnt the end of the list
+		{
+			cout << crawler->get_key() << " -> " ;
+			crawler = crawler->get_next();
+		}
+		cout << " NULL";
+		cout << endl << "=================" << endl;;
+>>>>>>> InDefenseOfTheAncients:src/Assignment3.cpp
 }
 
 void network::transfer_msg()
@@ -158,12 +274,21 @@ beacon* network::find_city(T name)
 
 void network::add_city()
 {
+<<<<<<< HEAD:src/Network.cpp
 	std::string ncity, pcity;				//control strings
 	std::cout << "Enter a city name:" << std::endl;
 	std::cin.ignore(1000, '\n');
 	getline(std::cin, ncity);				//get new city
 	std::cout << std::endl << "Enter a previous city name:" << std::endl;
 	getline(std::cin, pcity);				//get previous city
+=======
+	string ncity, pcity;				//control strings
+	cout << "Enter a city name: " << endl;
+	cin.ignore(1000, '\n');
+	getline(cin, ncity);				//get new city
+	cout << endl << "Enter a previous city name: " << endl;
+	getline(cin, pcity);				//get previous city
+>>>>>>> InDefenseOfTheAncients:src/Assignment3.cpp
 
 	crawler = find_city(pcity);			//sets crawler to previous
 	beacon* temp = new beacon(ncity);	//creates new node with specified name
