@@ -237,10 +237,10 @@ void network::transfer_msg()
 	if (infile.is_open())			//if it is open, proceed. Could use error handling if it doesn't open, but this is hard coded, so it is an environment issue if that is the case
 	{
 		string buffer;
-		while (getline(infile, buffer, ' '))	//while there are still words to grab (delim by spaces)
+		while (infile >> buffer && !infile.eof())	//while there are still words to grab (delim by spaces)
 		{
 			crawler = head;						//set to top of the chain
-			while (crawler->get_next() != NULL)	//while it is not the last one
+			while (crawler != NULL)	//while it is not the last one
 			{
 				crawler->set_message(buffer);	//commit word
 				cout << crawler->get_key() << " recieved " << crawler->get_message() << endl ;	//print condition
